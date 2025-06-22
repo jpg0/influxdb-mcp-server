@@ -31,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ toLowerCase(github.repository_owner) }}/${{ toLowerCase(github.event.repository.name) }}:${{ steps.branch-name.outputs.branch }}
+          tags: ghcr.io/${{ github.repository }}:${{ steps.branch-name.outputs.branch }}
           # This also assumes your Dockerfile is at the root of your repository.
           # If your Dockerfile is in a different location, you'll need to adjust the 'context' or add 'file' parameter.
           # Example: file: ./path/to/Dockerfile
