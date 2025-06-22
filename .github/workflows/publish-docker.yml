@@ -1,0 +1,37 @@
+name: Publish Docker image to GHCR
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get branch name
+        id: branch-name
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner,, }}/${{ github.event.repository.name,, }}:${{ steps.branch-name.outputs.branch }}
+          # This also assumes your Dockerfile is at the root of your repository.
+          # If your Dockerfile is in a different location, you'll need to adjust the 'context' or add 'file' parameter.
+          # Example: file: ./path/to/Dockerfile
