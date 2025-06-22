@@ -102,6 +102,77 @@ npm install
 INFLUXDB_TOKEN=your_token npm start
 ```
 
+You can also start the server with Streamable HTTP transport by providing the `--http` option with an optional port number (defaults to 3000). This mode uses an internal Express.js server:
+
+```bash
+# Start with Streamable HTTP transport on default port 3000
+INFLUXDB_TOKEN=your_token npm start -- --http
+
+# Start with Streamable HTTP transport on a specific port
+INFLUXDB_TOKEN=your_token npm start -- --http 8080
+```
+
+If you installed globally or are using npx, you can run:
+```bash
+INFLUXDB_TOKEN=your_token influxdb-mcp-server --http
+# or
+INFLUXDB_TOKEN=your_token influxdb-mcp-server --http 8080
+```
+
+## Running with Docker Compose
+
+This project includes a `docker-compose.yml` file to easily run the MCP server. This setup assumes you have an **existing InfluxDB instance** that the MCP server will connect to.
+
+**Prerequisites:**
+- Docker and Docker Compose installed.
+- An existing InfluxDB instance (v2.x or compatible) accessible from where you run Docker Compose.
+
+**Configuration:**
+
+1.  **Environment Variables:**
+    The MCP server is configured using environment variables. You **must** set these in a `.env` file in the project root directory or provide them when running `docker compose`.
+
+    Create a `.env` file in the project root with the following content:
+    ```env
+    # .env - Configure to connect to your EXISTING InfluxDB
+    INFLUXDB_URL=http://your-influxdb-host:8086
+    INFLUXDB_TOKEN=your_influxdb_api_token
+    INFLUXDB_ORG=your_influxdb_organization_name
+
+    # Optional: Specify the host port for the MCP server (defaults to 3000)
+    # MCP_PORT=3001
+    ```
+    **Important:**
+    - `INFLUXDB_URL`: The full URL of your existing InfluxDB instance (e.g., `http://localhost:8086` if running locally, or `http://influxdb.example.com:8086`).
+    - `INFLUXDB_TOKEN`: An API token for your InfluxDB instance that has the necessary permissions for the MCP server to operate (read/write data, manage orgs/buckets if those tools are used).
+    - `INFLUXDB_ORG`: The InfluxDB organization the MCP server will primarily interact with.
+    - `MCP_PORT` (Optional): If you want to expose the MCP server on a different host port than the default `3000`.
+
+2.  **Network Considerations:**
+    If your InfluxDB instance is running in Docker on a custom network, you might need to adjust the `docker-compose.yml` to connect the `mcp-server` service to that same network. See comments in `docker-compose.yml` for guidance. If InfluxDB is running on the host or elsewhere, ensure `INFLUXDB_URL` is resolvable from within the Docker container (e.g., use `host.docker.internal` for host services from Docker Desktop).
+
+**Usage:**
+
+1.  **Start the MCP Server:**
+    Navigate to the project root directory (where `docker-compose.yml` and your `.env` file are) and run:
+    ```bash
+    docker compose up --build
+    ```
+    Or, to run in detached mode:
+    ```bash
+    docker compose up --build -d
+    ```
+    This command builds the MCP server Docker image (if it's not already built or if the `Dockerfile` has changed) and starts the `mcp-server` service.
+
+2.  **Accessing the MCP Server:**
+    The MCP server will be accessible at `http://localhost:<MCP_PORT_OR_3000>/mcp`. For example, if `MCP_PORT` is not set in your `.env` file, it will be `http://localhost:3000/mcp`.
+
+3.  **Stopping the MCP Server:**
+    To stop the server, press `Ctrl+C` in the terminal where `docker compose up` is running (if not in detached mode), or run:
+    ```bash
+    docker compose down
+    ```
+
 ## Integration with Claude for Desktop
 
 Add the server to your `claude_desktop_config.json`:

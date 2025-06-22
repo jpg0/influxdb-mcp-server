@@ -15,5 +15,8 @@ COPY src ./src
 # RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 # USER appuser
 
-# Entrypoint for MCP server (using stdio transport)
-ENTRYPOINT ["node", "src/index.js"]
+# Expose the default HTTP port
+EXPOSE 3000
+
+# Entrypoint for MCP server (using HTTP transport by default)
+ENTRYPOINT ["node", "src/index.js", "--http"]
