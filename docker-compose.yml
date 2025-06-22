@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${MCP_PORT:-3000}:3000" # Allow overriding the host port
+    environment:
+      # Users must configure INFLUXDB_URL to point to their existing InfluxDB instance
+      - INFLUXDB_URL=${INFLUXDB_URL:?Please set INFLUXDB_URL to your InfluxDB instance}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN:?Please set INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=${INFLUXDB_ORG:?Please set INFLUXDB_ORG}
+      # - MCP_LOG_LEVEL=debug # Optional: for more verbose logging
+    # If your InfluxDB is on a custom network that this container needs to join,
+    # you can uncomment and configure the network settings below.
+    # networks:
+    #   - some-custom-network
+
+# If you were using custom networks, define them here.
+# networks:
+#   some-custom-network:
+#     external: true # If connecting to an existing external network
+#     # driver: bridge # Or specify driver if creating a new one
