@@ -1,10 +1,12 @@
 [![MseeP Badge](https://mseep.net/pr/idoru-influxdb-mcp-server-badge.jpg)](https://mseep.ai/app/idoru-influxdb-mcp-server)
 
-# InfluxDB MCP Server
+# InfluxDB v2 MCP Server
 
 [![smithery badge](https://smithery.ai/badge/@idoru/influxdb-mcp-server)](https://smithery.ai/server/@idoru/influxdb-mcp-server)
 
-A Model Context Protocol (MCP) server that exposes access to an InfluxDB instance using the InfluxDB OSS API v2. Mostly built with Claude Code.
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/idoru/influxdb-mcp-server)](https://archestra.ai/mcp-catalog/idoru__influxdb-mcp-server)
+
+A Model Context Protocol (MCP) server that exposes access to an InfluxDB v2 instance using the InfluxDB OSS API v2. Mostly built with Claude Code.
 
 ## Features
 
@@ -100,6 +102,25 @@ npm install
 
 # Run the server
 INFLUXDB_TOKEN=your_token npm start
+```
+
+`influxdb-mcp-server` uses stdio transport by default. You can explicitly request it with `--stdio`, or start the server with Streamable HTTP transport by providing the `--http` option with an optional port number (defaults to 3000). This mode uses an internal Express.js server:
+
+```bash
+# Start with Streamable HTTP transport on default port 3000
+INFLUXDB_TOKEN=your_token npm start -- --http
+
+# Start with Streamable HTTP transport on a specific port
+INFLUXDB_TOKEN=your_token npm start -- --http 8080
+```
+
+If you installed globally or are using npx, you can run:
+```bash
+INFLUXDB_TOKEN=your_token influxdb-mcp-server --http
+# or explicitly force stdio
+INFLUXDB_TOKEN=your_token influxdb-mcp-server --stdio
+# or
+INFLUXDB_TOKEN=your_token influxdb-mcp-server --http 8080
 ```
 
 You can also start the server with Streamable HTTP transport by providing the `--http` option with an optional port number (defaults to 3000). This mode uses an internal Express.js server:
